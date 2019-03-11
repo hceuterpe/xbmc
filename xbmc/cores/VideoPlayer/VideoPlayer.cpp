@@ -1712,6 +1712,8 @@ void CVideoPlayer::ProcessAudioData(CDemuxStream* pStream, DemuxPacket* pPacket)
     if (hasEdit && hasEdit.value()->action == EDL::Action::MUTE)
       drop = true;
   }
+  CLog::Log(LOGDEBUG, LOGAUDIO, "CVideoPlayer::ProcessAudioData size:{:d} dts:{:.3f} pts:{:.3f} dur:{:.3f}ms, clock:{:.3f} drop:{:d} level:{:d}",
+    pPacket->iSize, pPacket->dts/DVD_TIME_BASE, pPacket->pts/DVD_TIME_BASE, pPacket->duration/1000.0, m_clock.GetClock() / DVD_TIME_BASE, drop, m_VideoPlayerAudio->GetLevel());
 
   m_VideoPlayerAudio->SendMessage(std::make_shared<CDVDMsgDemuxerPacket>(pPacket, drop));
 
@@ -2022,6 +2024,7 @@ void CVideoPlayer::HandlePlaySpeed()
         (m_CurrentAudio.avsync == CCurrentStream::AV_SYNC_CONT ||
          m_CurrentVideo.syncState == IDVDStreamPlayer::SYNC_INSYNC))
     {
+      CLog::Log(LOGDEBUG, LOGAUDIO, "VideoPlayer::Sync - Audio - Waiting, clock: {:.3f}", m_clock.GetClock());
       m_CurrentAudio.syncState = IDVDStreamPlayer::SYNC_INSYNC;
       m_CurrentAudio.avsync = CCurrentStream::AV_SYNC_NONE;
       m_VideoPlayerAudio->SendMessage(
@@ -2225,8 +2228,8 @@ bool CVideoPlayer::CheckPlayerInit(CCurrentStream& current)
   {
     if(current.dts == DVD_NOPTS_VALUE)
     {
-      CLog::Log(LOGDEBUG, "{} - dropping packet type:{} dts:{:f} to get to start point at {:f}",
-                __FUNCTION__, current.player, current.dts, current.startpts);
+      CLog::Log(LOGDEBUG, LOGAUDIO, "CVideoPlayer::{} - Dropping packet type:{:d} dts:{:.3f} to get to start point at {:.3f}",
+        __FUNCTION__, current.player,  current.dts / 1000000.0, current.startpts / 1000000.0);
       return true;
     }
 
@@ -2249,8 +2252,8 @@ bool CVideoPlayer::CheckPlayerInit(CCurrentStream& current)
 
     if(current.dts < current.startpts)
     {
-      CLog::Log(LOGDEBUG, "{} - dropping packet type:{} dts:{:f} to get to start point at {:f}",
-                __FUNCTION__, current.player, current.dts, current.startpts);
+      CLog::Log(LOGDEBUG, LOGAUDIO, "CVideoPlayer::{} - dropping packet type:{:d} dts:{:.3f} to get to start point at {:.3f}",
+        __FUNCTION__, current.player,  current.dts / 1000000.0, current.startpts / 1000000.0);
       return true;
     }
   }
