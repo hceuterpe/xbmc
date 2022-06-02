@@ -368,7 +368,7 @@ CBitstreamConverter::CBitstreamConverter()
   m_convert_bytestream = false;
   m_sps_pps_context.sps_pps_data = NULL;
   m_start_decode = true;
-  m_convert_dovi = 0;
+  m_convert_dovi = 2;
   m_removeDovi = false;
   m_removeHdr10Plus = false;
 }
