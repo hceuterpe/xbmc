@@ -71,7 +71,7 @@ CVideoPlayerVideo::CVideoPlayerVideo(CDVDClock* pClock
   m_fForcedAspectRatio = 0;
 
   // 128 MB allows max bitrate of 128 Mbit/s (e.g. UHD Blu-Ray) during 8 seconds
-  m_messageQueue.SetMaxDataSize(LvLVideoMIN);
+  m_messageQueue.SetMaxDataSize(128 * 1024 * 1024);
   m_messageQueue.SetMaxTimeSize(8.0);
 
   m_iDroppedFrames = 0;
@@ -1024,10 +1024,8 @@ std::string CVideoPlayerVideo::GetPlayerInfo()
   int width, height;
   m_processInfo.GetVideoDimensions(width, height);
   std::ostringstream s;
-  s << "vq:"   << std::setw(2) << std::min(99, m_messageQueue.GetLevel()) << "% ("
-    << std::setw(2) << std::min(99, m_messageQueue.GetLevel(true)) << "%, "
-    << std::setw(3) << m_messageQueue.GetMaxDataSize() / SIZE_1M << "MB)";
-  s << ", Mb/s:" << std::fixed << std::setprecision(2) << (double)GetVideoBitrate() / (double)SIZE_1M;
+  s << "vq:"   << std::setw(2) << std::min(99, m_messageQueue.GetLevel()) << "% (" << std::setw(2) << std::min(99, m_messageQueue.GetLevel(true)) << "%)";
+  s << ", Mb/s:" << std::fixed << std::setprecision(2) << (double)GetVideoBitrate() / (1024.0*1024.0);
   s << ", dc:"   << m_processInfo.GetVideoDecoderName().c_str();
   s << ", " << width << "x" << height << (m_processInfo.GetVideoInterlaced() ? "i" : "p") << " [" << std::setprecision(2) << m_processInfo.GetVideoDAR() << "]@" << std::fixed << std::setprecision(3) << m_processInfo.GetVideoFps() << ", deint:" << m_processInfo.GetVideoDeintMethod();
   s << ", drop:" << m_iDroppedFrames;
