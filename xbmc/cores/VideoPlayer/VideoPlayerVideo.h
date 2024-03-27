@@ -76,7 +76,6 @@ public:
   int  GetDataLevel() const { return m_messageQueue.GetLevel(true); }
   void SetMaxDataSize(int iMaxDataSize) { m_messageQueue.SetMaxDataSize(iMaxDataSize); }
   int GetMaxDataSize() const { return m_messageQueue.GetMaxDataSize(); }
-  double GetLastPTS() const { return m_last_pts; }
 
   // classes
   CDVDOverlayContainer* m_pOverlayContainer;
@@ -147,6 +146,4 @@ protected:
   VideoPicture m_picture;
 
   EOutputState m_outputSate;
-
-  double m_last_pts;
 };
